@@ -12,11 +12,11 @@ import collections
 # 6. Full house
 # 7. High card
 
-# Rank value hands:
-# 1. Straight
-
 # Suit based hands:
 # 1. Flush
+
+# Rank value hands:
+# 1. Straight
 
 # Combo hands:
 # 1. Straight flush
@@ -32,6 +32,37 @@ import collections
 # 8. Two pairs: two cards of the same rank and two cards of the same different rank
 # 9. One pair: two cards of the same rank
 # 10. High card: card with the highest rank
+
+def determine_straight(cards):
+    # Put card ranks in ascending order
+    ordered = sorted(cards)
+
+    straight = []  # Initialize straight
+
+    # Straight requires at least five different ranks
+    if len(ordered) >= 5:
+        straight = [ordered[0]]  # Initial value for straight
+
+        for i in range(1, len(ordered)):
+            current_number = ordered[i]
+            previous_number = ordered[i-1]
+
+            # Add next number in straight to list
+            if current_number-previous_number==1:
+                straight.append(current_number)
+            else:
+                # Straight already detected, break from for loop
+                if len(straight) >= 5:
+                    print(straight)
+                    break
+                # Reset straight
+                else:
+                    straight = [current_number]
+
+    if len(straight)<5:
+        return False
+    else:
+        return straight
 
 # Determine the highest hand someone has
 def determine_hands(cards): #player_cards, common_cards):
@@ -91,35 +122,20 @@ def determine_hands(cards): #player_cards, common_cards):
     most_common_suit = suits_frequency[0]
 
     # Flush
-    if most_common_suit[1] == 5:
+    if most_common_suit[1] >= 5:
         pass
 
     # Determine rank value hands
+    is_straight = determine_straight(counts)
 
-    # Put card ranks in ascending order
-    ordered = sorted(counts)
+    # Determine combo hands
 
-    straight = []  # Initialize straight
+    # Flush present
+    if most_common_suit[1]>=5:
+        # Search cards of flush suit for straight
+        cards_in_suit=sorted([card.rank for card in cards if card.suit==most_common_suit[0]])
+        straight_flush = determine_straight(cards_in_suit)
 
-    # Straight requires at least five different ranks
-    if len(ordered) >= 5:
-        straight = [ordered[0]]  # Initial value for straight
-
-        for i in range(1, len(ordered)):
-            current_number = ordered[i]
-            previous_number = ordered[i-1]
-
-            # Add next number in straight to list
-            if current_number-previous_number==1:
-                straight.append(current_number)
-            else:
-                # Straight already detected, break from for loop
-                if len(straight) >= 5:
-                    print(straight)
-                    break
-                # Reset straight
-                else:
-                    straight = [current_number]
 
 class Card():
     def __init__(self) -> None:
