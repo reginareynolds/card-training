@@ -94,6 +94,33 @@ def determine_hands(cards): #player_cards, common_cards):
     if most_common_suit[1] == 5:
         pass
 
+    # Determine rank value hands
+
+    # Put card ranks in ascending order
+    ordered = sorted(counts)
+
+    straight = []  # Initialize straight
+
+    # Straight requires at least five different ranks
+    if len(ordered) >= 5:
+        straight = [ordered[0]]  # Initial value for straight
+
+        for i in range(1, len(ordered)):
+            current_number = ordered[i]
+            previous_number = ordered[i-1]
+
+            # Add next number in straight to list
+            if current_number-previous_number==1:
+                straight.append(current_number)
+            else:
+                # Straight already detected, break from for loop
+                if len(straight) >= 5:
+                    print(straight)
+                    break
+                # Reset straight
+                else:
+                    straight = [current_number]
+
 class Card():
     def __init__(self) -> None:
         self.suit = None
