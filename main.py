@@ -65,7 +65,7 @@ def determine_straight(cards):
         return straight
 
 # Determine the highest hand someone has
-def determine_hands(cards): #player_cards, common_cards):
+def determine_hands(player_cards, common_cards):
     # Determine rank frequency hand
 
     # Find multiples of a rank
@@ -135,7 +135,7 @@ def determine_hands(cards): #player_cards, common_cards):
         # Search cards of flush suit for straight
         cards_in_suit=sorted([card.rank for card in cards if card.suit==most_common_suit[0]])
         straight_flush = determine_straight(cards_in_suit)
-
+    # TODO: Compare flushes/straights to each other
 
 class Card():
     def __init__(self) -> None:
@@ -146,6 +146,13 @@ class Player():
     def __init__(self) -> None:
         self.cards = []
         self.hand = []
+
+
+class Table():
+    def __init__(self) -> None:
+        self.players = []
+        self.cards = []
+
 
 def deal(deck, table):
     players = 4
@@ -168,9 +175,10 @@ def deal(deck, table):
         newP = Player()
         newP.cards.append(pulls[i*2])
         newP.cards.append(pulls[(i*2)+1])
-        table.append(newP)
+        table.players.append(newP)
 
-    determine_hands(pulls)
+    table.cards = pulls[-5:]
+
 
 if __name__ == '__main__':
     deck = {
@@ -188,7 +196,10 @@ if __name__ == '__main__':
             new.rank=val
             cards.append(new)
 
-    table = []
+    table = Table()
     deal(cards, table)
+
+    for player in table.players:
+        determine_hands(player.cards, table.cards)
 
     print(table)
