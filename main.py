@@ -21,25 +21,17 @@ import collections
 # Combo hands:
 # 1. Straight flush
 
-# Straight flush
-# Five cards of the same suit in sequence
-
-# Four of a kind
-
-# Full house
-# 3 of a kind and a pair. Builds on logic for one pair and three of a kind
-
-# Flush
-# Five cards of the same suit
-
-# Straight
-# Five cards in sequence
-
-# Three of a kind
-# Builds on one pair
-# Two pairs
-# One pair
-# High card
+# Hands, strongest to weakest:
+# 1. Five of a kind: only possible with wild cards
+# 2. Straight flush: five cards of the same suit in sequence
+# 3. Four of a kind: four cards of the same rank
+# 4. Full house: three of a kind and a pair. Builds on logic for one pair and three of a kind
+# 5. Flush: five cards of the same suit
+# 6. Straight: five cards in rank sequence
+# 7. Three of a kind: three cards of the same rank. Builds on one pair
+# 8. Two pairs: two cards of the same rank and two cards of the same different rank
+# 9. One pair: two cards of the same rank
+# 10. High card: card with the highest rank
 
 # Determine the highest hand someone has
 def determine_hands(cards): #player_cards, common_cards):
@@ -88,6 +80,19 @@ def determine_hands(cards): #player_cards, common_cards):
         else:
             pass
 
+    # Determine suit based hands
+
+    # Find multiples of a suit
+    print([card.suit for card in cards])
+    suits = collections.Counter([card.suit for card in cards])
+
+    suits_frequency = suits.most_common()
+
+    most_common_suit = suits_frequency[0]
+
+    # Flush
+    if most_common_suit[1] == 5:
+        pass
 
 class Card():
     def __init__(self) -> None:
@@ -96,6 +101,7 @@ class Card():
 
 class Player():
     def __init__(self) -> None:
+        self.cards = []
         self.hand = []
 
 def deal(deck, table):
@@ -117,8 +123,8 @@ def deal(deck, table):
 
     for i in range(0, players):
         newP = Player()
-        newP.hand.append(pulls[i*2])
-        newP.hand.append(pulls[(i*2)+1])
+        newP.cards.append(pulls[i*2])
+        newP.cards.append(pulls[(i*2)+1])
         table.append(newP)
 
     determine_hands(pulls)
