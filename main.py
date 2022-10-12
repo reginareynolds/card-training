@@ -33,6 +33,12 @@ import collections
 # 9. One pair: two cards of the same rank
 # 10. High card: card with the highest rank
 
+def determine_flush(suit_count):
+    if suit_count[1] >= 5:
+        return suit_count
+    else:
+        return False
+
 def determine_straight(cards):
     # Put card ranks in ascending order
     ordered = sorted(cards)
@@ -66,11 +72,14 @@ def determine_straight(cards):
 
 # Determine the highest hand someone has
 def determine_hands(player_cards, common_cards):
+    # Combine player cards and common cards into single list
+    pool = player_cards+common_cards
+
     # Determine rank frequency hand
 
     # Find multiples of a rank
-    print([card.rank for card in cards])
-    counts = collections.Counter([card.rank for card in cards])
+    print([card.rank for card in pool])
+    counts = collections.Counter([card.rank for card in pool])
 
     rank_frequency = counts.most_common()
 
@@ -114,16 +123,15 @@ def determine_hands(player_cards, common_cards):
     # Determine suit based hands
 
     # Find multiples of a suit
-    print([card.suit for card in cards])
-    suits = collections.Counter([card.suit for card in cards])
+    print([card.suit for card in pool])
+    suits = collections.Counter([card.suit for card in pool])
 
     suits_frequency = suits.most_common()
 
     most_common_suit = suits_frequency[0]
 
     # Flush
-    if most_common_suit[1] >= 5:
-        pass
+    is_flush = determine_flush(most_common_suit)
 
     # Determine rank value hands
     is_straight = determine_straight(counts)
@@ -131,9 +139,9 @@ def determine_hands(player_cards, common_cards):
     # Determine combo hands
 
     # Flush present
-    if most_common_suit[1]>=5:
+    if is_flush:
         # Search cards of flush suit for straight
-        cards_in_suit=sorted([card.rank for card in cards if card.suit==most_common_suit[0]])
+        cards_in_suit = sorted([card.rank for card in pool if card.suit==is_flush[0]])
         straight_flush = determine_straight(cards_in_suit)
     # TODO: Compare flushes/straights to each other
 
