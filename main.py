@@ -155,11 +155,17 @@ class Player():
         self.cards = []
         self.hand = []
 
+        self.dealer = False
+        self.small_blind = False
+        self.big_blind = False
+        self.money = 100
+
 
 class Table():
     def __init__(self) -> None:
         self.players = []
         self.cards = []
+        self.pot = 0
 
 
 def deal(deck, table):
@@ -205,6 +211,17 @@ if __name__ == '__main__':
             cards.append(new)
 
     table = Table()
+
+    # Initialize players
+    players = 3
+    for i in range(0, players):
+        newP = Player()
+        table.players.append(newP)
+
+    # Set initial dealer and blinds
+    table.players[0].dealer = True
+    table.players[1].small_blind = True
+    table.players[2].big_blind = True
     deal(cards, table)
 
     for player in table.players:
