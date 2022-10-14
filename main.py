@@ -154,10 +154,6 @@ class Player():
     def __init__(self) -> None:
         self.cards = []
         self.hand = []
-
-        self.dealer = False
-        self.small_blind = False
-        self.big_blind = False
         self.money = 100
 
 
@@ -166,6 +162,9 @@ class Table():
         self.players = []
         self.cards = []
         self.pot = 0
+        self.dealer = None
+        self.big_blind = None
+        self.small_blind = None
 
 
 def deal(deck, table):
@@ -194,6 +193,26 @@ def deal(deck, table):
     table.cards = pulls[-5:]
 
 
+# Blinds pay into pot
+def pay_blinds(small_blind, big_blind, pot):
+    small = 2.5
+    big = 5
+
+    # Check to make sure blinds have enough money
+    if small_blind.money < small:
+        pot = pot + small_blind.money  # Add whatever money small blind does have
+        small_blind.money = 0
+    else:
+        pot = pot + small
+        small_blind.money = small_blind.money - small
+
+    if big_blind.money < big:
+        pot = pot + big_blind.money  # Add whatever money big blind does have
+        big_blind.money = 0
+    else:
+        pot = pot + big
+        big_blind.money = big_blind.money - big
+
 if __name__ == '__main__':
     deck = {
         "Spades":[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], 
@@ -219,9 +238,12 @@ if __name__ == '__main__':
         table.players.append(newP)
 
     # Set initial dealer and blinds
-    table.players[0].dealer = True
-    table.players[1].small_blind = True
-    table.players[2].big_blind = True
+    table.dealer = table.players[0]
+    table.small_blind = table.players[1]
+    table.big_blind = table.players[2]
+
+    # Small blind and big blind pay into pot
+    pay_blinds(table.small_blind, table.big_blind, table.pot)
     deal(cards, table)
 
     for player in table.players:
