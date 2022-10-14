@@ -261,13 +261,20 @@ def get_current(players, previous):
 def bet(group, previous):
     finished = False
 
-    # Find index of previous better
-    i = group.players.index(previous)
-
-    current = get_current(group.players, i)
+    checked = 0
 
     # Loop through and make sure everyone has contributed the same amount
     while not finished:
+        
+        # Exit once everyone has checked or all but one have folded
+        if (checked == len(group.players)) or (len(group.players) == 1):
+            finished = True
+
+        # Find index of previous better
+        i = group.players.index(previous)
+
+        current = get_current(group.players, i)
+
         # TODO: Parse and verify text entered
         if current.contributed < previous.contributed:
             choice = input("Fold, call, or raise?")
@@ -275,21 +282,42 @@ def bet(group, previous):
             choice = input("Fold, check, or raise?")
 
         # Folded, remove from match and prompt next player
-        if choice == "f":
+        if choice == "fold":
             group.players.remove(current)
-            current = get_current(group.players, i)
-        elif choice == "c":
+        elif choice == "call" or choice == "check":
             difference = previous.contributed-current.contributed
 
             # Check to make sure player has  enough money
             if current.money < difference:
-                pot = pot + current.money  # Add whatever money player does have
+                group.pot = group.pot + current.money  # Add whatever money player does have
                 current.contributed = current.contributed +current.money
                 current.money = 0
             else:
-                pot = pot + difference
+                group.pot = group.pot + difference
                 current.contributed = current.contributed + difference
                 current.money = current.money - difference            
+
+            # Reset previous better
+            previous = current
+
+            checked = checked + 1
+        elif choice == "r":
+            amount = input("How much?")
+
+            # Check to make sure player has  enough money
+            while current.money < amount:
+                amount = input("How much?")
+            else:
+                group.pot = group.pot + amount
+                current.contributed = current.contributed + amount
+                current.money = current.money - amount
+
+            # Reset previous better
+            previous = current
+
+            # Reset checked
+            checked = 0
+
 if __name__ == '__main__':
     # Original deck
     cards = []
