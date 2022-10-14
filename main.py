@@ -213,7 +213,7 @@ def pay_blinds(small_blind, big_blind, pot):
         pot = pot + big
         big_blind.money = big_blind.money - big
 
-if __name__ == '__main__':
+def create_deck(original):
     deck = {
         "Spades":[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], 
         "Clubs":[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
@@ -221,13 +221,18 @@ if __name__ == '__main__':
         "Diamonds":[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
     }
 
-    cards = []
     for suit in deck:
         for val in deck[suit]:
             new = Card()
             new.suit=suit
             new.rank=val
-            cards.append(new)
+            original.append(new)
+
+if __name__ == '__main__':
+    # Original deck
+    cards = []
+
+    create_deck(cards)
 
     table = Table()
 
