@@ -156,6 +156,7 @@ class Player():
         self.cards = []
         self.hand = []
         self.money = 100
+        self.contributed = 0  # Track contributions to the pot this round
 
 
 class Table():
@@ -217,16 +218,20 @@ def pay_blinds(small_blind, big_blind, pot):
     # Check to make sure blinds have enough money
     if small_blind.money < small:
         pot = pot + small_blind.money  # Add whatever money small blind does have
+        small_blind.contributed = small_blind.money
         small_blind.money = 0
     else:
         pot = pot + small
+        small_blind.contributed = small
         small_blind.money = small_blind.money - small
 
     if big_blind.money < big:
         pot = pot + big_blind.money  # Add whatever money big blind does have
+        big_blind.contributed = big_blind.money
         big_blind.money = 0
     else:
         pot = pot + big
+        big_blind.contributed = big
         big_blind.money = big_blind.money - big
 
 def create_deck(original):
@@ -244,6 +249,47 @@ def create_deck(original):
             new.rank=val
             original.append(new)
 
+def get_current(players, previous):
+    # Loop to beginning of list if needed
+    if (previous + 1) == len(players):
+        current_better = players[0]
+    else:
+        current_better = players[previous+1]
+
+    return current_better
+
+def bet(group, previous):
+    finished = False
+
+    # Find index of previous better
+    i = group.players.index(previous)
+
+    current = get_current(group.players, i)
+
+    # Loop through and make sure everyone has contributed the same amount
+    while not finished:
+        # TODO: Parse and verify text entered
+        if current.contributed < previous.contributed:
+            choice = input("Fold, call, or raise?")
+        else:
+            choice = input("Fold, check, or raise?")
+
+        # Folded, remove from match and prompt next player
+        if choice == "f":
+            group.players.remove(current)
+            current = get_current(group.players, i)
+        elif choice == "c":
+            difference = previous.contributed-current.contributed
+
+            # Check to make sure player has  enough money
+            if current.money < difference:
+                pot = pot + current.money  # Add whatever money player does have
+                current.contributed = current.contributed +current.money
+                current.money = 0
+            else:
+                pot = pot + difference
+                current.contributed = current.contributed + difference
+                current.money = current.money - difference            
 if __name__ == '__main__':
     # Original deck
     cards = []
@@ -271,6 +317,9 @@ if __name__ == '__main__':
     # Deal pre-flop cards
     play_deck = copy.deepcopy(cards)
     remaining_deck = preflop_deal(play_deck, table.players)
+
+    # Allow pre-flop betting
+    bet(table, table.big_blind)
     deal(cards, table)
 
     for player in table.players:
