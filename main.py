@@ -1,5 +1,6 @@
 import random
 import collections
+import copy
 
 # Define hand types
 
@@ -192,6 +193,21 @@ def deal(deck, table):
 
     table.cards = pulls[-5:]
 
+def preflop_deal(deck, eligible_players):
+    # TODO: Determine eligible players
+
+    total_pulls = len(eligible_players) * 2
+
+    pulls = random.sample(list(deck), total_pulls)
+    for i in range(0, len(eligible_players)):
+        eligible_players[i].cards.append(pulls[i*2])
+        eligible_players[i].cards.append(pulls[(i*2)+1])
+
+        # Remove dealt cards from deck
+        deck.remove(pulls[i*2])
+        deck.remove(pulls[(i*2)+1])
+    return deck
+
 
 # Blinds pay into pot
 def pay_blinds(small_blind, big_blind, pot):
@@ -249,6 +265,12 @@ if __name__ == '__main__':
 
     # Small blind and big blind pay into pot
     pay_blinds(table.small_blind, table.big_blind, table.pot)
+
+    # TODO: Add ante function
+
+    # Deal pre-flop cards
+    play_deck = copy.deepcopy(cards)
+    remaining_deck = preflop_deal(play_deck, table.players)
     deal(cards, table)
 
     for player in table.players:
