@@ -82,6 +82,8 @@ def determine_hands(player_cards, common_cards):
     print([card.rank for card in pool])
     counts = collections.Counter([card.rank for card in pool])
 
+    test = sorted([(card.rank, card.suit) for card in pool])
+
     rank_frequency = counts.most_common()
 
     most_common_rank = rank_frequency[0]
@@ -158,6 +160,21 @@ class Player():
         self.money = 100
         self.contributed = 0  # Track contributions to the pot this round
 
+    def fold(self):
+        pass
+
+    def check(self):
+        pass
+    
+    def bet(self):
+        pass
+
+    def call(self):
+        pass
+
+    def raise_bet(self):
+        pass
+
 
 class Table():
     def __init__(self) -> None:
@@ -167,10 +184,11 @@ class Table():
         self.dealer = None
         self.big_blind = None
         self.small_blind = None
+        self.eligible = []
 
 
 def deal(deck, table):
-    players = 4
+    players = 1 #4
     decks = 1
 
     hole_pulls = players * 2
@@ -200,6 +218,7 @@ def preflop_deal(deck, eligible_players):
     total_pulls = len(eligible_players) * 2
 
     pulls = random.sample(list(deck), total_pulls)
+
     for i in range(0, len(eligible_players)):
         eligible_players[i].cards.append(pulls[i*2])
         eligible_players[i].cards.append(pulls[(i*2)+1])
@@ -207,7 +226,23 @@ def preflop_deal(deck, eligible_players):
         # Remove dealt cards from deck
         deck.remove(pulls[i*2])
         deck.remove(pulls[(i*2)+1])
+    
     return deck
+
+def set_dealer_and_blinds(group):
+    # Find index of old dealer
+    old_dealer = group.players.index(group.dealer)
+
+    # Find number of players
+    playing = len(group.players)
+
+    # Assign new dealer
+    group.dealer = group.small_blind
+
+    # Assign new blinds
+    group.small_blind = group.big_blind
+
+    pass
 
 
 # Blinds pay into pot
@@ -348,6 +383,9 @@ if __name__ == '__main__':
 
     # Allow pre-flop betting
     bet(table, table.big_blind)
+
+    # set_dealer_and_blinds(table)
+
     deal(cards, table)
 
     for player in table.players:
